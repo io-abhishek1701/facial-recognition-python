@@ -14,9 +14,16 @@ dataset_path = os.path.join(base_path, person_name)  # path for this person
 if not os.path.exists(dataset_path):
     os.makedirs(dataset_path)   #create a folder
 
-cap=cv2.VideoCapture(1) #start webcam capture
+cap=cv2.VideoCapture(0) #start webcam capture
 
-count=0
+# Initialize count based on existing images in folder (robust way)
+existing_files = [f for f in os.listdir(dataset_path) if f.endswith('.jpg')]  # get all .jpg files
+
+if len(existing_files) > 0:  # if folder has images
+    numbers = [int(f.split('.')[0]) for f in existing_files if f.split('.')[0].isdigit()]  # extract numbers
+    count = max(numbers) + 1 if len(numbers) > 0 else 0  # continue from max index
+else:
+    count = 0  # start from 0 if empty
 
 box_size=600
 
