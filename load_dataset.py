@@ -25,3 +25,5 @@ labels = np.array(labels)
 
 data = data / 255.0     #Normalize i.e for 0-1
 data=data.reshape(-1,128,128,1)
+
+print(data)
