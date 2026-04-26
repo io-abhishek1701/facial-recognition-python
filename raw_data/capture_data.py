@@ -5,7 +5,7 @@ person_name = input("Enter person's name: ").strip()
 if person_name == "":
     raise ValueError("Person name cannot be empty")
 
-base_path = "dataset"
+base_path = "raw_data"
 if not os.path.exists(base_path):
     os.makedirs(base_path)  # ensure base dataset folder exists
 
@@ -14,7 +14,7 @@ dataset_path = os.path.join(base_path, person_name)  # path for this person
 if not os.path.exists(dataset_path):
     os.makedirs(dataset_path)   #create a folder
 
-cap=cv2.VideoCapture(0) #start webcam capture
+cap=cv2.VideoCapture(1) #start webcam capture
 
 # Initialize count based on existing images in folder (robust way)
 existing_files = [f for f in os.listdir(dataset_path) if f.endswith('.jpg')]  # get all .jpg files

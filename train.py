@@ -8,10 +8,10 @@ os.environ["TF_NUM_INTRAOP_THREADS"] = "1"  # Limit TensorFlow internal threads
 os.environ["TF_NUM_INTEROP_THREADS"] = "1"  # Limit TensorFlow parallel threads
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"  # Fix Mac threading conflicts
 
-import tensorflow as tf  # Import TensorFlow AFTER setting env variables
+import tensorflow as tf
 
-tf.config.threading.set_intra_op_parallelism_threads(1)  # Limit intra threads
-tf.config.threading.set_inter_op_parallelism_threads(1)  # Limit inter threads
+tf.config.threading.set_intra_op_parallelism_threads(1)
+tf.config.threading.set_inter_op_parallelism_threads(1)
 
 model = create_model(len(people))
 

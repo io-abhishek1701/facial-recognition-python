@@ -1,6 +1,6 @@
-import os  # For environment settings
+import os
 
-os.environ["OMP_NUM_THREADS"] = "1"  # Limit threads
+os.environ["OMP_NUM_THREADS"] = "1" 
 os.environ["TF_NUM_INTRAOP_THREADS"] = "1"
 os.environ["TF_NUM_INTEROP_THREADS"] = "1"
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
@@ -15,28 +15,20 @@ def create_model(num_classes):
     # First layer to accept input image
 
     model.add(MaxPooling2D((2,2)))  
-    # Reduce image size while keeping important features
 
     model.add(Conv2D(64, (3,3), activation='relu'))  
-    # Detect more complex features like eyes and nose
 
-    model.add(MaxPooling2D((2,2)))  
-    # Reduce size again
+    model.add(MaxPooling2D((2,2)))
 
-    model.add(Conv2D(128, (3,3), activation='relu'))  
-    # Learn high-level facial structure
+    model.add(Conv2D(128, (3,3), activation='relu'))
 
-    model.add(MaxPooling2D((2,2)))  
-    # Reduce size
+    model.add(MaxPooling2D((2,2)))
 
     model.add(Flatten())  
-    # Convert 2D feature maps into 1D vector
 
     model.add(Dense(128, activation='relu'))  
-    # Learn complex relationships
 
     model.add(Dense(num_classes, activation='softmax'))  
-    # Output layer → number of people
 
     model.compile(
         optimizer='adam',  
@@ -44,7 +36,7 @@ def create_model(num_classes):
         metrics=['accuracy']
     )
     print("Model Training complete")
-    return model  # Return the built model
+    return model
 
 if __name__ == "__main__":
     print("This file defines the CNN model. Run train.py instead.")
