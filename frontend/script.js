@@ -11,41 +11,41 @@ const API = window.API_BASE_URL || "http://127.0.0.1:8000";
 ========================================================== */
 
 const loadingOverlay =
-document.getElementById("loadingOverlay");
+    document.getElementById("loadingOverlay");
 
 const enrollMessage =
-document.getElementById("enrollMessage");
+    document.getElementById("enrollMessage");
 
 const recognitionResult =
-document.getElementById("recognitionResult");
+    document.getElementById("recognitionResult");
 
 const deleteMessage =
-document.getElementById("deleteMessage");
+    document.getElementById("deleteMessage");
 
 const totalPersons =
-document.getElementById("totalPersons");
+    document.getElementById("totalPersons");
 
 /* ==========================================================
    Loading
 ========================================================== */
 
-function showLoading(){
+function showLoading() {
 
-if(loadingOverlay){
+    if (loadingOverlay) {
 
-loadingOverlay.classList.add("active");
+        loadingOverlay.classList.add("active");
 
-}
-
-}
-
-function hideLoading(){
-
-if(loadingOverlay){
-
-loadingOverlay.classList.remove("active");
+    }
 
 }
+
+function hideLoading() {
+
+    if (loadingOverlay) {
+
+        loadingOverlay.classList.remove("active");
+
+    }
 
 }
 
@@ -53,37 +53,37 @@ loadingOverlay.classList.remove("active");
    Toast Message
 ========================================================== */
 
-function showMessage(id,message,success=true){
+function showMessage(id, message, success = true) {
 
-const box=document.getElementById(id);
+    const box = document.getElementById(id);
 
-if(!box){
+    if (!box) {
 
-return;
+        return;
 
-}
+    }
 
-box.style.display="block";
+    box.style.display = "block";
 
-box.innerHTML=message;
+    box.innerHTML = message;
 
-if(success){
+    if (success) {
 
-box.className="message success";
+        box.className = "message success";
 
-}
+    }
 
-else{
+    else {
 
-box.className="message error";
+        box.className = "message error";
 
-}
+    }
 
-setTimeout(()=>{
+    setTimeout(() => {
 
-box.style.display="none";
+        box.style.display = "none";
 
-},5000);
+    }, 5000);
 
 }
 
@@ -91,67 +91,67 @@ box.style.display="none";
    API Wrapper
 ========================================================== */
 
-async function api(url,method="GET",body=null){
+async function api(url, method = "GET", body = null) {
 
-showLoading();
+    showLoading();
 
-try{
+    try {
 
-const response=await fetch(
+        const response = await fetch(
 
-API+url,
+            API + url,
 
-{
+            {
 
-method,
+                method,
 
-body,
+                body,
 
-headers:{
+                headers: {
 
-Accept:"application/json"
+                    Accept: "application/json"
 
-}
+                }
 
-}
+            }
 
-);
+        );
 
-const text=await response.text();
+        const text = await response.text();
 
-const data=text ? JSON.parse(text) : {};
+        const data = text ? JSON.parse(text) : {};
 
-hideLoading();
+        hideLoading();
 
-if(!response.ok){
+        if (!response.ok) {
 
-return {
+            return {
 
-success:false,
+                success: false,
 
-message:data.message || data.detail || `Request failed (${response.status})`
+                message: data.message || data.detail || `Request failed (${response.status})`
 
-};
+            };
 
-}
+        }
 
-return data;
+        return data;
 
-}
+    }
 
-catch(error){
+    catch (error) {
 
-hideLoading();
+        hideLoading();
 
-console.error(error);
+        console.error(error);
 
-alert(
-    "Unable to connect to backend. Make sure FastAPI is running on " + API
-);
+        alert(
+            "Unable to connect to backend. Make sure FastAPI is running on " + API
+        );
 
-return null;
+        return null;
 
-}
+    }
 
 }
 
@@ -159,53 +159,53 @@ return null;
    Image Preview
 ========================================================== */
 
-function previewImage(inputId,previewId){
+function previewImage(inputId, previewId) {
 
-const input=document.getElementById(inputId);
+    const input = document.getElementById(inputId);
 
-const preview=document.getElementById(previewId);
+    const preview = document.getElementById(previewId);
 
-input.addEventListener("change",()=>{
+    input.addEventListener("change", () => {
 
-const file=input.files[0];
+        const file = input.files[0];
 
-if(!file){
+        if (!file) {
 
-preview.style.display="none";
+            preview.style.display = "none";
 
-return;
+            return;
 
-}
+        }
 
-const reader=new FileReader();
+        const reader = new FileReader();
 
-reader.onload=function(e){
+        reader.onload = function (e) {
 
-preview.src=e.target.result;
+            preview.src = e.target.result;
 
-preview.style.display="block";
+            preview.style.display = "block";
 
-}
+        }
 
-reader.readAsDataURL(file);
+        reader.readAsDataURL(file);
 
-});
+    });
 
 }
 
 previewImage(
 
-"enrollImage",
+    "enrollImage",
 
-"enrollPreview"
+    "enrollPreview"
 
 );
 
 previewImage(
 
-"recognizeImage",
+    "recognizeImage",
 
-"recognizePreview"
+    "recognizePreview"
 
 );
 
@@ -218,7 +218,7 @@ async function enrollPerson() {
 
     const name = document.getElementById("name").value.trim();
 
-    const image = document.getElementById("enrollImage").files[0];
+    const images = document.getElementById("enrollImage").files;
 
     if (name === "") {
 
@@ -231,22 +231,39 @@ async function enrollPerson() {
         return;
     }
 
-    if (!image) {
+    if (images.length === 0) {
 
         showMessage(
             "enrollMessage",
-            "Please select an image.",
+            "Please select at least one image.",
             false
         );
 
         return;
+
+    }
+
+    if (images.length > 5) {
+
+        showMessage(
+            "enrollMessage",
+            "Maximum 5 images allowed.",
+            false
+        );
+
+        return;
+
     }
 
     const formData = new FormData();
 
     formData.append("name", name);
 
-    formData.append("image", image);
+    for (const image of images) {
+
+        formData.append("images", image);
+
+    }
 
     const data = await api(
         "/enroll",
@@ -260,29 +277,27 @@ async function enrollPerson() {
     if (data.success) {
 
         showMessage(
-
             "enrollMessage",
-
             `
-            <strong>✅ Enrollment Complete</strong>
+    <strong>✅ Enrollment Complete</strong>
 
-            <br><br>
+    <br><br>
 
-            Person ID :
-            <strong>${data.id}</strong>
+    <strong>Name:</strong> ${data.name}
 
-            <br>
+    <br>
 
-            Name :
-            <strong>${data.name}</strong>
+    <strong>Person ID:</strong> ${data.id}
 
-            <br><br>
+    <br>
 
-            Face embedding generated successfully.
+    <strong>Images Processed:</strong> ${data.images_processed}
 
-            `,
+    <br><br>
+
+    Face embeddings generated successfully.
+    `,
             true
-
         );
 
         document.getElementById("name").value = "";
@@ -317,13 +332,13 @@ async function enrollPerson() {
    Reset Enroll Form
 ========================================================== */
 
-function resetEnrollForm(){
+function resetEnrollForm() {
 
-document.getElementById("name").value="";
+    document.getElementById("name").value = "";
 
-document.getElementById("enrollImage").value="";
+    document.getElementById("enrollImage").value = "";
 
-document.getElementById("enrollPreview").style.display="none";
+    document.getElementById("enrollPreview").style.display = "none";
 
 }
 
@@ -331,9 +346,9 @@ document.getElementById("enrollPreview").style.display="none";
    Auto Refresh Dashboard
 ========================================================== */
 
-async function refreshDashboard(){
+async function refreshDashboard() {
 
-await loadPersons();
+    await loadPersons();
 
 }
 
@@ -343,13 +358,13 @@ await loadPersons();
 
 window.addEventListener(
 
-"load",
+    "load",
 
-()=>{
+    () => {
 
-refreshDashboard();
+        refreshDashboard();
 
-}
+    }
 
 );
 
@@ -512,17 +527,17 @@ async function recognizePerson() {
    Clear Recognition
 ========================================================== */
 
-function clearRecognition(){
+function clearRecognition() {
 
-    recognitionResult.style.display="none";
+    recognitionResult.style.display = "none";
 
     document.getElementById(
         "recognizeImage"
-    ).value="";
+    ).value = "";
 
     document.getElementById(
         "recognizePreview"
-    ).style.display="none";
+    ).style.display = "none";
 
 }
 
@@ -530,13 +545,13 @@ function clearRecognition(){
    Auto Hide Recognition
 ========================================================== */
 
-function hideRecognitionAfterDelay(){
+function hideRecognitionAfterDelay() {
 
-    setTimeout(()=>{
+    setTimeout(() => {
 
-        recognitionResult.style.display="none";
+        recognitionResult.style.display = "none";
 
-    },8000);
+    }, 8000);
 
 }
 
@@ -599,8 +614,8 @@ async function loadPersons() {
         <td>
 
             ${new Date(
-                person.created_at
-            ).toLocaleString()}
+            person.created_at
+        ).toLocaleString()}
 
         </td>
 
@@ -628,7 +643,7 @@ async function loadPersons() {
    Refresh List
 ========================================================== */
 
-async function refreshPersons(){
+async function refreshPersons() {
 
     await loadPersons();
 
@@ -638,7 +653,7 @@ async function refreshPersons(){
    Dashboard Counter
 ========================================================== */
 
-function updateCounter(count){
+function updateCounter(count) {
 
     totalPersons.innerHTML = count;
 
@@ -648,42 +663,42 @@ function updateCounter(count){
    Refresh Every 30 Seconds
 ========================================================== */
 
-setInterval(()=>{
+setInterval(() => {
 
-loadPersons();
+    loadPersons();
 
-},30000);
+}, 30000);
 
 /* ==========================================================
    Search Person
 ========================================================== */
 
-function filterPersons(){
+function filterPersons() {
 
-const input=document
-.getElementById("searchPerson");
+    const input = document
+        .getElementById("searchPerson");
 
-if(!input)
-return;
+    if (!input)
+        return;
 
-const filter=input.value.toLowerCase();
+    const filter = input.value.toLowerCase();
 
-const rows=document
-.querySelectorAll("#personsTable tr");
+    const rows = document
+        .querySelectorAll("#personsTable tr");
 
-rows.forEach(row=>{
+    rows.forEach(row => {
 
-const text=row.innerText.toLowerCase();
+        const text = row.innerText.toLowerCase();
 
-row.style.display=
+        row.style.display =
 
-text.includes(filter)
+            text.includes(filter)
 
-? ""
+                ? ""
 
-: "none";
+                : "none";
 
-});
+    });
 
 }
 
@@ -862,10 +877,10 @@ async function refreshDashboardData() {
    Keyboard Shortcuts
 ========================================================== */
 
-document.addEventListener("keydown", function(event){
+document.addEventListener("keydown", function (event) {
 
     // Ctrl + R -> Refresh Persons
-    if(event.ctrlKey && event.key === "r"){
+    if (event.ctrlKey && event.key === "r") {
 
         event.preventDefault();
 
@@ -874,13 +889,13 @@ document.addEventListener("keydown", function(event){
     }
 
     // ESC -> Hide Messages
-    if(event.key === "Escape"){
+    if (event.key === "Escape") {
 
-        enrollMessage.style.display="none";
+        enrollMessage.style.display = "none";
 
-        recognitionResult.style.display="none";
+        recognitionResult.style.display = "none";
 
-        deleteMessage.style.display="none";
+        deleteMessage.style.display = "none";
 
     }
 
@@ -891,7 +906,7 @@ document.addEventListener("keydown", function(event){
    Copy Person ID
 ========================================================== */
 
-function copyPersonId(id){
+function copyPersonId(id) {
 
     navigator.clipboard.writeText(id);
 
@@ -912,31 +927,31 @@ function copyPersonId(id){
    Reset Forms
 ========================================================== */
 
-function resetAllForms(){
+function resetAllForms() {
 
     // Enroll
 
-    document.getElementById("name").value="";
+    document.getElementById("name").value = "";
 
-    document.getElementById("enrollImage").value="";
+    document.getElementById("enrollImage").value = "";
 
-    document.getElementById("enrollPreview").style.display="none";
+    document.getElementById("enrollPreview").style.display = "none";
 
 
     // Recognition
 
-    document.getElementById("recognizeImage").value="";
+    document.getElementById("recognizeImage").value = "";
 
-    document.getElementById("recognizePreview").style.display="none";
+    document.getElementById("recognizePreview").style.display = "none";
 
 
     // Delete
 
-    const deleteInput=document.getElementById("deleteId");
+    const deleteInput = document.getElementById("deleteId");
 
-    if(deleteInput){
+    if (deleteInput) {
 
-        deleteInput.value="";
+        deleteInput.value = "";
 
     }
 
@@ -947,35 +962,35 @@ function resetAllForms(){
    Drag & Drop Upload
 ========================================================== */
 
-function enableDragDrop(inputId){
+function enableDragDrop(inputId) {
 
-    const input=document.getElementById(inputId);
+    const input = document.getElementById(inputId);
 
-    if(!input) return;
+    if (!input) return;
 
-    input.addEventListener("dragover",(e)=>{
-
-        e.preventDefault();
-
-        input.style.borderColor="#2563eb";
-
-    });
-
-    input.addEventListener("dragleave",()=>{
-
-        input.style.borderColor="#d1d5db";
-
-    });
-
-    input.addEventListener("drop",(e)=>{
+    input.addEventListener("dragover", (e) => {
 
         e.preventDefault();
 
-        input.files=e.dataTransfer.files;
+        input.style.borderColor = "#2563eb";
+
+    });
+
+    input.addEventListener("dragleave", () => {
+
+        input.style.borderColor = "#d1d5db";
+
+    });
+
+    input.addEventListener("drop", (e) => {
+
+        e.preventDefault();
+
+        input.files = e.dataTransfer.files;
 
         input.dispatchEvent(new Event("change"));
 
-        input.style.borderColor="#d1d5db";
+        input.style.borderColor = "#d1d5db";
 
     });
 
@@ -990,19 +1005,19 @@ enableDragDrop("recognizeImage");
    Scroll To Top Button
 ========================================================== */
 
-const topButton=document.getElementById("topBtn");
+const topButton = document.getElementById("topBtn");
 
-window.addEventListener("scroll",()=>{
+window.addEventListener("scroll", () => {
 
-    if(window.scrollY>250){
+    if (window.scrollY > 250) {
 
-        topButton.style.display="flex";
+        topButton.style.display = "flex";
 
     }
 
-    else{
+    else {
 
-        topButton.style.display="none";
+        topButton.style.display = "none";
 
     }
 
@@ -1013,7 +1028,7 @@ window.addEventListener("scroll",()=>{
    Startup
 ========================================================== */
 
-window.addEventListener("load",async()=>{
+window.addEventListener("load", async () => {
 
     console.log("QuickFace AI Started");
 
@@ -1028,18 +1043,18 @@ window.addEventListener("load",async()=>{
    Auto Refresh Every Minute
 ========================================================== */
 
-setInterval(async()=>{
+setInterval(async () => {
 
     await loadPersons();
 
-},60000);
+}, 60000);
 
 
 /* ==========================================================
    Global Error Handler
 ========================================================== */
 
-window.addEventListener("error",(e)=>{
+window.addEventListener("error", (e) => {
 
     console.error(e);
 
@@ -1051,7 +1066,7 @@ window.addEventListener("error",(e)=>{
 ========================================================== */
 
 console.log(
-`
+    `
 ===========================================
         QuickFace AI
 ===========================================

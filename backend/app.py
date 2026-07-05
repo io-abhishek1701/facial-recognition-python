@@ -2,6 +2,7 @@ from pathlib import Path
 from uuid import uuid4
 import json
 
+import os
 import cv2
 import numpy as np
 from fastapi import Depends, FastAPI, File, Form, UploadFile
@@ -58,35 +59,81 @@ def remove_file_if_exists(image_path: Path) -> None:
 @app.post("/enroll")
 async def enroll_person(
     name: str = Form(...),
-    image: UploadFile = File(...),
-    db: Session = Depends(get_db),
+    images: list[UploadFile] = File(...),
+    db: Session = Depends(get_db)
 ):
-    image_path = await save_uploaded_image(image)
-    img = cv2.imread(str(image_path))
 
-    if img is None:
-        remove_file_if_exists(image_path)
+    if len(images) == 0:
         return {
             "success": False,
-            "message": "Invalid image",
+            "message": "Please upload at least one image."
         }
 
-    face = detect_face(img)
-
-    if face is None:
-        remove_file_if_exists(image_path)
+    if len(images) > 5:
         return {
             "success": False,
-            "message": "No face detected",
+            "message": "Maximum 5 images allowed."
         }
 
-    embedding = generate_embedding(face)
-    embedding_json = json.dumps(embedding.tolist())
+    embeddings = []
+    first_image_path = None
+
+    for index, image in enumerate(images, start=1):
+        person_folder = os.path.join(
+        "enrolled_faces",
+        name
+        )
+
+        os.makedirs(
+            person_folder,
+            exist_ok=True
+        )
+
+        extension = os.path.splitext(image.filename)[1]
+        image_path = os.path.join(
+        person_folder,
+        f"image_{index}{extension}"
+        )
+
+        with open(image_path, "wb") as buffer:
+            buffer.write(await image.read())
+
+        if first_image_path is None:
+            first_image_path = image_path
+
+        img = cv2.imread(image_path)
+
+        if img is None:
+            continue
+
+        face = detect_face(img)
+
+        if face is None:
+            continue
+
+        embedding = generate_embedding(face)
+
+        embeddings.append(embedding)
+
+    if len(embeddings) == 0:
+        return {
+            "success": False,
+            "message": "No valid face detected in uploaded images."
+        }
+
+    average_embedding = np.mean(
+        embeddings,
+        axis=0
+    )
+
+    embedding_json = json.dumps(
+        average_embedding.tolist()
+    )
 
     person = Person(
         name=name,
         embedding=embedding_json,
-        image_path=stored_image_path(image_path),
+        image_path=first_image_path
     )
 
     db.add(person)
@@ -94,12 +141,12 @@ async def enroll_person(
     db.refresh(person)
 
     return {
-        "success": True,
-        "message": "Person enrolled successfully",
-        "id": person.id,
-        "name": person.name,
-    }
-
+    "success": True,
+    "message": f"{person.name} enrolled successfully using {len(embeddings)} image(s).",
+    "id": person.id,
+    "name": person.name,
+    "images_processed": len(embeddings)
+}
 
 @app.post("/recognize")
 async def recognize_person(
