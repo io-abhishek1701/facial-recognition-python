@@ -1,7 +1,15 @@
-import cv2
 import numpy as np
 from mtcnn import MTCNN
 from keras_facenet import FaceNet
+from fastapi import FastAPI, UploadFile, File, Form, Depends
+from sqlalchemy.orm import Session
+from database import Base, engine, get_db
+from models import Person
+from schemas import PersonResponse
+
+import cv2
+import json
+import os
 
 # Load detector and FaceNet model once when the application starts
 detector = MTCNN()

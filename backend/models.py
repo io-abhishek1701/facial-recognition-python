@@ -1,8 +1,8 @@
 from sqlalchemy import Column, Integer, String, DateTime
-from database import Base
+
 from datetime import datetime
 
-
+from database import Base
 class Person(Base):
     __tablename__ = "persons"
 
