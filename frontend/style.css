@@ -1,46 +1,2806 @@
-body{
-    font-family: Arial, Helvetica, sans-serif;
-    background:#f4f6f8;
-    margin:0;
-    padding:40px;
+/* =========================================================
+   QuickFace AI
+   Premium Dashboard UI
+   Part 1
+========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+:root{
+
+--primary:#2563eb;
+
+--primary-dark:#1d4ed8;
+
+--secondary:#06b6d4;
+
+--success:#16a34a;
+
+--danger:#dc2626;
+
+--warning:#f59e0b;
+
+--white:#ffffff;
+
+--text:#1f2937;
+
+--text-light:#64748b;
+
+--border:#e5e7eb;
+
+--glass:rgba(255,255,255,.72);
+
+--shadow:0 20px 45px rgba(0,0,0,.08);
+
+--radius:18px;
+
 }
+
+*{
+
+margin:0;
+
+padding:0;
+
+box-sizing:border-box;
+
+font-family:'Inter',sans-serif;
+
+}
+
+html{
+
+scroll-behavior:smooth;
+
+}
+
+body{
+
+background:
+
+linear-gradient(135deg,#edf4ff,#f8fbff,#eef8ff);
+
+min-height:100vh;
+
+color:var(--text);
+
+overflow-x:hidden;
+
+}
+
+/* Animated Background */
+
+body::before{
+
+content:"";
+
+position:fixed;
+
+top:-150px;
+
+left:-150px;
+
+width:500px;
+
+height:500px;
+
+background:#3b82f6;
+
+opacity:.12;
+
+filter:blur(120px);
+
+border-radius:50%;
+
+z-index:-2;
+
+animation:floatOne 10s infinite alternate;
+
+}
+
+body::after{
+
+content:"";
+
+position:fixed;
+
+bottom:-200px;
+
+right:-150px;
+
+width:500px;
+
+height:500px;
+
+background:#06b6d4;
+
+opacity:.15;
+
+filter:blur(140px);
+
+border-radius:50%;
+
+z-index:-2;
+
+animation:floatTwo 12s infinite alternate;
+
+}
+
+@keyframes floatOne{
+
+0%{
+
+transform:translate(0,0);
+
+}
+
+100%{
+
+transform:translate(120px,70px);
+
+}
+
+}
+
+@keyframes floatTwo{
+
+0%{
+
+transform:translate(0,0);
+
+}
+
+100%{
+
+transform:translate(-120px,-60px);
+
+}
+
+}
+
+/* Container */
 
 .container{
-    width:500px;
-    margin:auto;
+
+width:min(1250px,92%);
+
+margin:auto;
+
+padding:40px 0 60px;
+
 }
 
+/* Header */
+
+header{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+flex-direction:column;
+
+margin-bottom:45px;
+
+}
+
+header h1{
+
+font-size:52px;
+
+font-weight:800;
+
+background:linear-gradient(
+90deg,
+#2563eb,
+#06b6d4
+);
+
+-webkit-background-clip:text;
+
+-webkit-text-fill-color:transparent;
+
+margin-bottom:12px;
+
+}
+
+header p{
+
+font-size:18px;
+
+color:var(--text-light);
+
+}
+
+/* Dashboard */
+
+.dashboard{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+
+gap:25px;
+
+margin-bottom:40px;
+
+}
+
+/* Cards */
+
 .card{
-    background:white;
-    padding:20px;
-    margin-bottom:20px;
-    border-radius:10px;
-    box-shadow:0 2px 10px rgba(0,0,0,.1);
+
+background:var(--glass);
+
+backdrop-filter:blur(20px);
+
+border:1px solid rgba(255,255,255,.6);
+
+box-shadow:var(--shadow);
+
+border-radius:var(--radius);
+
+padding:30px;
+
+text-align:center;
+
+transition:.35s;
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+.card::before{
+
+content:"";
+
+position:absolute;
+
+width:150%;
+
+height:4px;
+
+background:linear-gradient(
+90deg,
+#2563eb,
+#06b6d4
+);
+
+top:0;
+
+left:-20%;
+
+}
+
+.card:hover{
+
+transform:translateY(-10px);
+
+box-shadow:
+
+0 25px 50px rgba(37,99,235,.18);
+
+}
+
+.card i{
+
+font-size:38px;
+
+margin-bottom:15px;
+
+color:var(--primary);
+
+}
+
+.card h3{
+
+font-size:16px;
+
+font-weight:600;
+
+color:var(--text-light);
+
+margin-bottom:8px;
+
+}
+
+.card h2{
+
+font-size:34px;
+
+font-weight:800;
+
+color:var(--primary);
+
+}
+
+/* =========================================================
+   Premium Sections
+   Part 2
+========================================================= */
+
+.box{
+
+background:var(--glass);
+
+backdrop-filter:blur(20px);
+
+border-radius:24px;
+
+padding:35px;
+
+margin-bottom:35px;
+
+box-shadow:var(--shadow);
+
+border:1px solid rgba(255,255,255,.6);
+
+position:relative;
+
+overflow:hidden;
+
+transition:.35s;
+
+}
+
+.box:hover{
+
+transform:translateY(-6px);
+
+box-shadow:
+
+0 25px 60px rgba(0,0,0,.10);
+
+}
+
+.box::before{
+
+content:"";
+
+position:absolute;
+
+top:0;
+
+left:0;
+
+width:6px;
+
+height:100%;
+
+background:linear-gradient(
+
+180deg,
+
+#2563eb,
+
+#06b6d4
+
+);
+
+}
+
+.box h2{
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+font-size:28px;
+
+font-weight:700;
+
+margin-bottom:28px;
+
+color:var(--primary);
+
+}
+
+.box p{
+
+color:var(--text-light);
+
+margin-bottom:20px;
+
+line-height:1.7;
+
+}
+
+/* Inputs */
+
+label{
+
+display:block;
+
+margin-top:18px;
+
+margin-bottom:8px;
+
+font-weight:600;
+
+font-size:15px;
+
+color:#374151;
+
 }
 
 input{
-    width:100%;
-    padding:10px;
-    margin:10px 0;
-    box-sizing:border-box;
+
+width:100%;
+
+padding:16px 18px;
+
+font-size:15px;
+
+border-radius:14px;
+
+border:1px solid var(--border);
+
+background:white;
+
+transition:.3s;
+
+outline:none;
+
 }
 
+input:hover{
+
+border-color:#93c5fd;
+
+}
+
+input:focus{
+
+border-color:var(--primary);
+
+box-shadow:
+
+0 0 0 5px rgba(37,99,235,.15);
+
+}
+
+/* File Upload */
+
+input[type=file]{
+
+padding:18px;
+
+background:#f8fbff;
+
+cursor:pointer;
+
+border:2px dashed #bfdbfe;
+
+}
+
+input[type=file]:hover{
+
+background:#eef6ff;
+
+}
+
+/* Preview */
+
+.preview{
+
+display:none;
+
+margin:25px auto;
+
+width:220px;
+
+border-radius:18px;
+
+border:3px solid white;
+
+box-shadow:
+
+0 20px 40px rgba(0,0,0,.15);
+
+transition:.35s;
+
+}
+
+.preview:hover{
+
+transform:scale(1.04);
+
+}
+
+/* Buttons */
+
 button{
-    width:100%;
-    padding:12px;
-    background:#2563eb;
-    color:white;
-    border:none;
-    cursor:pointer;
-    border-radius:6px;
+
+padding:15px 28px;
+
+border:none;
+
+border-radius:14px;
+
+cursor:pointer;
+
+font-size:15px;
+
+font-weight:700;
+
+color:white;
+
+background:linear-gradient(
+
+135deg,
+
+#2563eb,
+
+#1d4ed8
+
+);
+
+transition:.3s;
+
+margin-top:20px;
+
 }
 
 button:hover{
-    background:#1d4ed8;
+
+transform:translateY(-3px);
+
+box-shadow:
+
+0 18px 35px rgba(37,99,235,.30);
+
 }
 
-#result{
-    margin-top:20px;
-    font-size:20px;
-    text-align:center;
+button:active{
+
+transform:scale(.97);
+
 }
+
+/* Delete Button */
+
+.delete-btn{
+
+background:linear-gradient(
+
+135deg,
+
+#ef4444,
+
+#dc2626
+
+);
+
+}
+
+.delete-btn:hover{
+
+box-shadow:
+
+0 18px 35px rgba(220,38,38,.30);
+
+}
+
+/* Refresh Button */
+
+.section-header{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+margin-bottom:25px;
+
+gap:20px;
+
+}
+
+.section-header button{
+
+margin-top:0;
+
+}
+
+/* Messages */
+
+.message{
+
+display:none;
+
+margin-top:25px;
+
+padding:18px 22px;
+
+border-radius:16px;
+
+font-weight:600;
+
+line-height:1.8;
+
+animation:fadeIn .35s;
+
+}
+
+.success{
+
+display:block;
+
+background:#dcfce7;
+
+color:#166534;
+
+border-left:6px solid #16a34a;
+
+}
+
+.error{
+
+display:block;
+
+background:#fee2e2;
+
+color:#991b1b;
+
+border-left:6px solid #dc2626;
+
+}
+
+@keyframes fadeIn{
+
+from{
+
+opacity:0;
+
+transform:translateY(12px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+/* =========================================================
+   Premium Tables
+   Part 3
+========================================================= */
+
+table{
+
+width:100%;
+
+border-collapse:collapse;
+
+margin-top:20px;
+
+overflow:hidden;
+
+border-radius:18px;
+
+background:white;
+
+box-shadow:
+
+0 15px 35px rgba(0,0,0,.05);
+
+}
+
+thead{
+
+background:linear-gradient(
+
+90deg,
+
+#2563eb,
+
+#06b6d4
+
+);
+
+color:white;
+
+}
+
+thead th{
+
+padding:18px;
+
+font-size:15px;
+
+font-weight:700;
+
+letter-spacing:.5px;
+
+}
+
+tbody tr{
+
+transition:.25s;
+
+border-bottom:1px solid #eef2f7;
+
+}
+
+tbody tr:nth-child(even){
+
+background:#f9fbff;
+
+}
+
+tbody tr:hover{
+
+background:#eef6ff;
+
+transform:scale(1.01);
+
+}
+
+tbody td{
+
+padding:18px;
+
+text-align:center;
+
+font-size:15px;
+
+color:#374151;
+
+}
+
+/* Table Buttons */
+
+tbody button{
+
+padding:10px 16px;
+
+font-size:14px;
+
+margin:0;
+
+}
+
+/* Status Grid */
+
+.status-grid{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+
+gap:22px;
+
+margin-top:20px;
+
+}
+
+/* Status Cards */
+
+.status-card{
+
+background:white;
+
+padding:22px;
+
+border-radius:18px;
+
+box-shadow:
+
+0 12px 30px rgba(0,0,0,.06);
+
+transition:.3s;
+
+text-align:center;
+
+}
+
+.status-card:hover{
+
+transform:translateY(-6px);
+
+}
+
+.status-card h3{
+
+margin-bottom:12px;
+
+color:#374151;
+
+font-size:18px;
+
+}
+
+.status-online{
+
+color:#16a34a;
+
+font-weight:700;
+
+font-size:18px;
+
+}
+
+.status-offline{
+
+color:#dc2626;
+
+font-weight:700;
+
+font-size:18px;
+
+}
+
+/* Project Info */
+
+.box ul{
+
+margin-left:25px;
+
+margin-top:15px;
+
+}
+
+.box li{
+
+margin:12px 0;
+
+font-size:15px;
+
+color:#4b5563;
+
+line-height:1.8;
+
+}
+
+.box strong{
+
+color:#2563eb;
+
+}
+
+/* Footer */
+
+footer{
+
+margin-top:50px;
+
+text-align:center;
+
+padding:45px 20px;
+
+color:#64748b;
+
+}
+
+footer hr{
+
+margin-bottom:35px;
+
+border:none;
+
+height:1px;
+
+background:#dbeafe;
+
+}
+
+.footer-content h2{
+
+font-size:34px;
+
+color:#2563eb;
+
+margin-bottom:12px;
+
+}
+
+.footer-content p{
+
+margin:8px 0;
+
+line-height:1.8;
+
+}
+
+.tech-stack{
+
+display:flex;
+
+justify-content:center;
+
+flex-wrap:wrap;
+
+gap:12px;
+
+margin:25px 0;
+
+}
+
+.tech-stack span{
+
+padding:10px 18px;
+
+background:white;
+
+border-radius:999px;
+
+box-shadow:
+
+0 8px 18px rgba(0,0,0,.06);
+
+font-weight:600;
+
+color:#2563eb;
+
+transition:.25s;
+
+}
+
+.tech-stack span:hover{
+
+transform:translateY(-3px);
+
+background:#2563eb;
+
+color:white;
+
+}
+
+/* =========================================================
+   Loading Overlay
+   Part 4
+========================================================= */
+
+.loading-overlay{
+
+position:fixed;
+
+top:0;
+
+left:0;
+
+width:100%;
+
+height:100%;
+
+background:rgba(255,255,255,.82);
+
+backdrop-filter:blur(10px);
+
+display:none;
+
+justify-content:center;
+
+align-items:center;
+
+flex-direction:column;
+
+z-index:99999;
+
+animation:fadeOverlay .3s;
+
+}
+
+.loading-overlay.active{
+
+display:flex;
+
+}
+
+.loader{
+
+width:80px;
+
+height:80px;
+
+border:8px solid #dbeafe;
+
+border-top:8px solid #2563eb;
+
+border-radius:50%;
+
+animation:spin 1s linear infinite;
+
+margin-bottom:25px;
+
+}
+
+.loading-overlay h3{
+
+font-size:24px;
+
+color:#2563eb;
+
+margin-bottom:8px;
+
+}
+
+.loading-overlay p{
+
+color:#64748b;
+
+}
+
+@keyframes spin{
+
+0%{
+
+transform:rotate(0deg);
+
+}
+
+100%{
+
+transform:rotate(360deg);
+
+}
+
+}
+
+@keyframes fadeOverlay{
+
+from{
+
+opacity:0;
+
+}
+
+to{
+
+opacity:1;
+
+}
+
+}
+
+/* =====================================
+Back To Top Button
+===================================== */
+
+.top-btn{
+
+position:fixed;
+
+right:30px;
+
+bottom:30px;
+
+width:58px;
+
+height:58px;
+
+border-radius:50%;
+
+display:none;
+
+align-items:center;
+
+justify-content:center;
+
+font-size:22px;
+
+font-weight:bold;
+
+background:linear-gradient(
+
+135deg,
+
+#2563eb,
+
+#06b6d4
+
+);
+
+color:white;
+
+box-shadow:
+
+0 20px 40px rgba(37,99,235,.35);
+
+transition:.3s;
+
+z-index:999;
+
+}
+
+.top-btn:hover{
+
+transform:translateY(-6px);
+
+}
+
+/* =====================================
+Scrollbar
+===================================== */
+
+::-webkit-scrollbar{
+
+width:12px;
+
+}
+
+::-webkit-scrollbar-track{
+
+background:#edf4ff;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+background:linear-gradient(
+
+180deg,
+
+#2563eb,
+
+#06b6d4
+
+);
+
+border-radius:999px;
+
+}
+
+::-webkit-scrollbar-thumb:hover{
+
+background:#1d4ed8;
+
+}
+
+/* =====================================
+Floating Glow
+===================================== */
+
+.card::after{
+
+content:"";
+
+position:absolute;
+
+width:220px;
+
+height:220px;
+
+background:rgba(37,99,235,.08);
+
+border-radius:50%;
+
+top:-120px;
+
+right:-120px;
+
+transition:.5s;
+
+}
+
+.card:hover::after{
+
+transform:scale(1.25);
+
+}
+
+/* =====================================
+Buttons Animation
+===================================== */
+
+button{
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+button::before{
+
+content:"";
+
+position:absolute;
+
+left:-120%;
+
+top:0;
+
+width:120%;
+
+height:100%;
+
+background:rgba(255,255,255,.25);
+
+transform:skewX(-30deg);
+
+transition:.5s;
+
+}
+
+button:hover::before{
+
+left:130%;
+
+}
+
+/* =====================================
+Input Animation
+===================================== */
+
+input{
+
+transition:
+
+border .3s,
+
+box-shadow .3s,
+
+transform .3s;
+
+}
+
+input:focus{
+
+transform:translateY(-2px);
+
+}
+
+/* =====================================
+Smooth Card Entrance
+===================================== */
+
+.card,
+
+.box{
+
+animation:slideUp .7s ease;
+
+}
+
+@keyframes slideUp{
+
+from{
+
+opacity:0;
+
+transform:translateY(30px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+/* =========================================================
+   Responsive Design
+   Part 5
+========================================================= */
+
+/* --------------------------
+Desktop Large Screens
+---------------------------*/
+
+@media (min-width:1400px){
+
+.container{
+
+max-width:1350px;
+
+}
+
+.card{
+
+padding:35px;
+
+}
+
+.box{
+
+padding:40px;
+
+}
+
+}
+
+
+/* --------------------------
+Laptop
+---------------------------*/
+
+@media(max-width:1200px){
+
+.dashboard{
+
+grid-template-columns:repeat(2,1fr);
+
+}
+
+.status-grid{
+
+grid-template-columns:repeat(2,1fr);
+
+}
+
+.container{
+
+width:95%;
+
+}
+
+}
+
+
+/* --------------------------
+Tablet
+---------------------------*/
+
+@media(max-width:900px){
+
+header h1{
+
+font-size:42px;
+
+}
+
+header p{
+
+font-size:16px;
+
+}
+
+.dashboard{
+
+grid-template-columns:1fr;
+
+gap:18px;
+
+}
+
+.section-header{
+
+flex-direction:column;
+
+align-items:flex-start;
+
+}
+
+.section-header button{
+
+width:100%;
+
+}
+
+.status-grid{
+
+grid-template-columns:1fr;
+
+}
+
+table{
+
+display:block;
+
+overflow-x:auto;
+
+white-space:nowrap;
+
+}
+
+.preview{
+
+width:200px;
+
+}
+
+}
+
+
+/* --------------------------
+Mobile
+---------------------------*/
+
+@media(max-width:600px){
+
+.container{
+
+width:95%;
+
+padding:25px 0;
+
+}
+
+header{
+
+margin-bottom:25px;
+
+}
+
+header h1{
+
+font-size:34px;
+
+}
+
+header p{
+
+font-size:14px;
+
+}
+
+.card{
+
+padding:22px;
+
+}
+
+.card h2{
+
+font-size:28px;
+
+}
+
+.card h3{
+
+font-size:15px;
+
+}
+
+.box{
+
+padding:22px;
+
+margin-bottom:22px;
+
+}
+
+.box h2{
+
+font-size:22px;
+
+}
+
+input{
+
+padding:14px;
+
+font-size:14px;
+
+}
+
+button{
+
+width:100%;
+
+padding:14px;
+
+font-size:15px;
+
+}
+
+.preview{
+
+width:100%;
+
+}
+
+.message{
+
+font-size:14px;
+
+}
+
+.footer-content h2{
+
+font-size:28px;
+
+}
+
+.tech-stack{
+
+justify-content:center;
+
+}
+
+.tech-stack span{
+
+font-size:13px;
+
+padding:8px 14px;
+
+}
+
+.top-btn{
+
+width:50px;
+
+height:50px;
+
+right:15px;
+
+bottom:15px;
+
+}
+
+}
+
+
+/* --------------------------
+Very Small Devices
+---------------------------*/
+
+@media(max-width:400px){
+
+header h1{
+
+font-size:28px;
+
+}
+
+.box{
+
+padding:18px;
+
+}
+
+.card{
+
+padding:18px;
+
+}
+
+.card h2{
+
+font-size:24px;
+
+}
+
+button{
+
+font-size:14px;
+
+}
+
+}
+
+
+/* --------------------------
+Nice Selection Color
+---------------------------*/
+
+::selection{
+
+background:#2563eb;
+
+color:white;
+
+}
+
+
+/* --------------------------
+Links
+---------------------------*/
+
+a{
+
+color:#2563eb;
+
+text-decoration:none;
+
+transition:.3s;
+
+}
+
+a:hover{
+
+color:#1d4ed8;
+
+}
+
+
+/* --------------------------
+Images
+---------------------------*/
+
+img{
+
+max-width:100%;
+
+display:block;
+
+}
+
+
+/* --------------------------
+Utility Classes
+---------------------------*/
+
+.text-center{
+
+text-align:center;
+
+}
+
+.mt-20{
+
+margin-top:20px;
+
+}
+
+.mt-30{
+
+margin-top:30px;
+
+}
+
+.mb-20{
+
+margin-bottom:20px;
+
+}
+
+.hidden{
+
+display:none;
+
+}
+
+.flex{
+
+display:flex;
+
+}
+
+.justify-center{
+
+justify-content:center;
+
+}
+
+.align-center{
+
+align-items:center;
+
+}
+
+/* =========================================================
+   Premium Effects
+   Part 6
+========================================================= */
+
+/* --------------------------
+Glass Reflection
+---------------------------*/
+
+.card,
+.box{
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+.card::after,
+.box::after{
+
+content:"";
+
+position:absolute;
+
+top:-60%;
+
+left:-120%;
+
+width:80%;
+
+height:220%;
+
+background:linear-gradient(
+
+90deg,
+
+transparent,
+
+rgba(255,255,255,.35),
+
+transparent
+
+);
+
+transform:rotate(25deg);
+
+transition:.8s;
+
+pointer-events:none;
+
+}
+
+.card:hover::after,
+.box:hover::after{
+
+left:140%;
+
+}
+
+/* --------------------------
+Dashboard Counter Animation
+---------------------------*/
+
+.card h2{
+
+transition:.4s;
+
+}
+
+.card:hover h2{
+
+transform:scale(1.08);
+
+color:#1d4ed8;
+
+}
+
+/* --------------------------
+Image Hover
+---------------------------*/
+
+.preview{
+
+cursor:pointer;
+
+}
+
+.preview:hover{
+
+transform:scale(1.06) rotate(.5deg);
+
+box-shadow:
+
+0 25px 60px rgba(0,0,0,.18);
+
+}
+
+/* --------------------------
+Table Hover
+---------------------------*/
+
+tbody tr{
+
+transition:
+
+background .3s,
+
+transform .3s,
+
+box-shadow .3s;
+
+}
+
+tbody tr:hover{
+
+background:#eef6ff;
+
+transform:translateY(-2px);
+
+box-shadow:
+
+0 8px 18px rgba(37,99,235,.10);
+
+}
+
+/* --------------------------
+Status Cards
+---------------------------*/
+
+.status-card{
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+.status-card::before{
+
+content:"";
+
+position:absolute;
+
+top:0;
+
+left:0;
+
+width:100%;
+
+height:4px;
+
+background:linear-gradient(
+
+90deg,
+
+#2563eb,
+
+#06b6d4
+
+);
+
+}
+
+.status-card:hover{
+
+transform:translateY(-5px);
+
+box-shadow:
+
+0 20px 45px rgba(37,99,235,.15);
+
+}
+
+/* --------------------------
+Tech Stack Badges
+---------------------------*/
+
+.tech-stack span{
+
+transition:
+
+transform .3s,
+
+background .3s,
+
+color .3s,
+
+box-shadow .3s;
+
+}
+
+.tech-stack span:hover{
+
+transform:translateY(-4px);
+
+background:#2563eb;
+
+color:white;
+
+box-shadow:
+
+0 15px 30px rgba(37,99,235,.25);
+
+}
+
+/* --------------------------
+Buttons
+---------------------------*/
+
+button{
+
+letter-spacing:.3px;
+
+}
+
+button:hover{
+
+filter:brightness(1.05);
+
+}
+
+button:disabled{
+
+cursor:not-allowed;
+
+opacity:.6;
+
+box-shadow:none;
+
+}
+
+/* --------------------------
+Delete Button
+---------------------------*/
+
+.delete-btn:hover{
+
+background:linear-gradient(
+
+135deg,
+
+#dc2626,
+
+#991b1b
+
+);
+
+}
+
+/* --------------------------
+Inputs
+---------------------------*/
+
+input::placeholder{
+
+color:#9ca3af;
+
+}
+
+input:focus::placeholder{
+
+opacity:.4;
+
+}
+
+/* --------------------------
+Footer
+---------------------------*/
+
+footer{
+
+border-top:1px solid rgba(0,0,0,.05);
+
+margin-top:60px;
+
+}
+
+/* --------------------------
+Notification Animation
+---------------------------*/
+
+.message{
+
+animation:notification .35s ease;
+
+}
+
+@keyframes notification{
+
+0%{
+
+opacity:0;
+
+transform:translateY(-10px);
+
+}
+
+100%{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+/* --------------------------
+Card Border Glow
+---------------------------*/
+
+.card:hover{
+
+border-color:#bfdbfe;
+
+}
+
+.box:hover{
+
+border-color:#bfdbfe;
+
+}
+
+/* --------------------------
+Smooth Everything
+---------------------------*/
+
+*{
+
+transition:
+
+background-color .25s,
+
+border-color .25s,
+
+color .25s;
+
+}
+
+/* =========================================================
+   Premium Theme & Animations
+   Part 7
+========================================================= */
+
+/* =====================================
+Dark Theme Support
+===================================== */
+
+body.dark{
+
+--primary:#60a5fa;
+
+--primary-dark:#3b82f6;
+
+--secondary:#22d3ee;
+
+--white:#111827;
+
+--glass:rgba(31,41,55,.75);
+
+--text:#f8fafc;
+
+--text-light:#cbd5e1;
+
+--border:#374151;
+
+background:#0f172a;
+
+color:var(--text);
+
+}
+
+body.dark .card,
+body.dark .box{
+
+background:rgba(30,41,59,.75);
+
+border:1px solid rgba(255,255,255,.05);
+
+}
+
+body.dark table{
+
+background:#1e293b;
+
+color:white;
+
+}
+
+body.dark tbody tr{
+
+background:#1e293b;
+
+}
+
+body.dark tbody tr:nth-child(even){
+
+background:#263447;
+
+}
+
+body.dark input{
+
+background:#1e293b;
+
+color:white;
+
+border-color:#334155;
+
+}
+
+body.dark input::placeholder{
+
+color:#94a3b8;
+
+}
+
+body.dark .status-card{
+
+background:#1e293b;
+
+}
+
+body.dark footer{
+
+color:#cbd5e1;
+
+}
+
+/* =====================================
+Gradient Text
+===================================== */
+
+.gradient-text{
+
+background:linear-gradient(
+
+90deg,
+
+#2563eb,
+
+#06b6d4,
+
+#8b5cf6
+
+);
+
+background-size:200%;
+
+-webkit-background-clip:text;
+
+-webkit-text-fill-color:transparent;
+
+animation:gradientMove 5s linear infinite;
+
+}
+
+@keyframes gradientMove{
+
+0%{
+
+background-position:0%;
+
+}
+
+100%{
+
+background-position:200%;
+
+}
+
+}
+
+/* =====================================
+Floating Animation
+===================================== */
+
+.float{
+
+animation:floating 3s ease-in-out infinite;
+
+}
+
+@keyframes floating{
+
+0%{
+
+transform:translateY(0px);
+
+}
+
+50%{
+
+transform:translateY(-8px);
+
+}
+
+100%{
+
+transform:translateY(0px);
+
+}
+
+}
+
+/* =====================================
+Pulse Animation
+===================================== */
+
+.pulse{
+
+animation:pulse 2s infinite;
+
+}
+
+@keyframes pulse{
+
+0%{
+
+transform:scale(1);
+
+}
+
+50%{
+
+transform:scale(1.05);
+
+}
+
+100%{
+
+transform:scale(1);
+
+}
+
+}
+
+/* =====================================
+Fade In
+===================================== */
+
+.fade-in{
+
+animation:fadeInPage .8s ease;
+
+}
+
+@keyframes fadeInPage{
+
+from{
+
+opacity:0;
+
+transform:translateY(25px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+/* =====================================
+Scale Animation
+===================================== */
+
+.scale{
+
+animation:scaleAnimation .5s;
+
+}
+
+@keyframes scaleAnimation{
+
+0%{
+
+transform:scale(.92);
+
+opacity:.6;
+
+}
+
+100%{
+
+transform:scale(1);
+
+opacity:1;
+
+}
+
+}
+
+/* =====================================
+Success Badge
+===================================== */
+
+.badge{
+
+display:inline-block;
+
+padding:8px 14px;
+
+border-radius:999px;
+
+background:#dcfce7;
+
+color:#166534;
+
+font-weight:600;
+
+font-size:13px;
+
+}
+
+/* =====================================
+Danger Badge
+===================================== */
+
+.badge-danger{
+
+background:#fee2e2;
+
+color:#991b1b;
+
+}
+
+/* =====================================
+Primary Badge
+===================================== */
+
+.badge-primary{
+
+background:#dbeafe;
+
+color:#2563eb;
+
+}
+
+/* =====================================
+Hover Glow
+===================================== */
+
+.glow:hover{
+
+box-shadow:
+
+0 0 25px rgba(37,99,235,.25);
+
+}
+
+/* =====================================
+Soft Border
+===================================== */
+
+.soft{
+
+border:1px solid rgba(255,255,255,.35);
+
+}
+
+/* =====================================
+Rounded Utilities
+===================================== */
+
+.round{
+
+border-radius:18px;
+
+}
+
+.round-full{
+
+border-radius:999px;
+
+}
+
+/* =====================================
+Shadow Utilities
+===================================== */
+
+.shadow{
+
+box-shadow:
+
+0 20px 40px rgba(0,0,0,.08);
+
+}
+
+.shadow-lg{
+
+box-shadow:
+
+0 30px 70px rgba(0,0,0,.15);
+
+}
+
+/* =========================================================
+   Final Polish
+   Part 8
+========================================================= */
+
+/* ==========================
+   Divider
+========================== */
+
+hr{
+
+border:none;
+
+height:1px;
+
+background:linear-gradient(
+90deg,
+transparent,
+#cbd5e1,
+transparent
+);
+
+margin:35px 0;
+
+}
+
+/* ==========================
+   Footer Links
+========================== */
+
+footer a{
+
+color:#2563eb;
+
+font-weight:600;
+
+transition:.3s;
+
+}
+
+footer a:hover{
+
+color:#1d4ed8;
+
+text-decoration:underline;
+
+}
+
+/* ==========================
+   Card Titles
+========================== */
+
+.card h3,
+.box h2{
+
+letter-spacing:.3px;
+
+}
+
+/* ==========================
+   Dashboard Icons
+========================== */
+
+.card i{
+
+transition:.35s;
+
+}
+
+.card:hover i{
+
+transform:scale(1.15) rotate(8deg);
+
+color:#1d4ed8;
+
+}
+
+/* ==========================
+   Notification Colors
+========================== */
+
+.info{
+
+background:#dbeafe;
+
+color:#1d4ed8;
+
+}
+
+.warning{
+
+background:#fef3c7;
+
+color:#b45309;
+
+}
+
+/* ==========================
+   Glass Utilities
+========================== */
+
+.glass{
+
+background:rgba(255,255,255,.65);
+
+backdrop-filter:blur(18px);
+
+border:1px solid rgba(255,255,255,.35);
+
+}
+
+/* ==========================
+   Flex Utilities
+========================== */
+
+.flex{
+
+display:flex;
+
+}
+
+.flex-column{
+
+display:flex;
+
+flex-direction:column;
+
+}
+
+.justify-center{
+
+justify-content:center;
+
+}
+
+.justify-between{
+
+justify-content:space-between;
+
+}
+
+.align-center{
+
+align-items:center;
+
+}
+
+.gap-10{
+
+gap:10px;
+
+}
+
+.gap-20{
+
+gap:20px;
+
+}
+
+.gap-30{
+
+gap:30px;
+
+}
+
+/* ==========================
+   Margin Utilities
+========================== */
+
+.mt-10{margin-top:10px;}
+
+.mt-20{margin-top:20px;}
+
+.mt-30{margin-top:30px;}
+
+.mt-40{margin-top:40px;}
+
+.mb-10{margin-bottom:10px;}
+
+.mb-20{margin-bottom:20px;}
+
+.mb-30{margin-bottom:30px;}
+
+.mb-40{margin-bottom:40px;}
+
+/* ==========================
+   Padding Utilities
+========================== */
+
+.p-10{padding:10px;}
+
+.p-20{padding:20px;}
+
+.p-30{padding:30px;}
+
+.p-40{padding:40px;}
+
+/* ==========================
+   Width Utilities
+========================== */
+
+.w-100{
+
+width:100%;
+
+}
+
+.w-50{
+
+width:50%;
+
+}
+
+/* ==========================
+   Text Utilities
+========================== */
+
+.text-center{
+
+text-align:center;
+
+}
+
+.text-right{
+
+text-align:right;
+
+}
+
+.text-left{
+
+text-align:left;
+
+}
+
+.text-primary{
+
+color:#2563eb;
+
+}
+
+.text-success{
+
+color:#16a34a;
+
+}
+
+.text-danger{
+
+color:#dc2626;
+
+}
+
+.text-muted{
+
+color:#64748b;
+
+}
+
+/* ==========================
+   Background Utilities
+========================== */
+
+.bg-primary{
+
+background:#2563eb;
+
+color:white;
+
+}
+
+.bg-success{
+
+background:#16a34a;
+
+color:white;
+
+}
+
+.bg-danger{
+
+background:#dc2626;
+
+color:white;
+
+}
+
+.bg-light{
+
+background:#f8fafc;
+
+}
+
+/* ==========================
+   Cursor
+========================== */
+
+.pointer{
+
+cursor:pointer;
+
+}
+
+/* ==========================
+   Transition
+========================== */
+
+.transition{
+
+transition:.3s;
+
+}
+
+/* ==========================
+   Hover Lift
+========================== */
+
+.hover-lift:hover{
+
+transform:translateY(-5px);
+
+}
+
+/* ==========================
+   Opacity
+========================== */
+
+.opacity-80{
+
+opacity:.8;
+
+}
+
+.opacity-60{
+
+opacity:.6;
+
+}
+
+/* ==========================
+   Border Radius
+========================== */
+
+.radius{
+
+border-radius:18px;
+
+}
+
+.radius-sm{
+
+border-radius:10px;
+
+}
+
+.radius-lg{
+
+border-radius:28px;
+
+}
+
+/* ==========================
+   Animation Delay
+========================== */
+
+.delay-1{
+
+animation-delay:.1s;
+
+}
+
+.delay-2{
+
+animation-delay:.2s;
+
+}
+
+.delay-3{
+
+animation-delay:.3s;
+
+}
+
+.delay-4{
+
+animation-delay:.4s;
+
+}
+
+/* ==========================
+   Print
+========================== */
+
+@media print{
+
+body{
+
+background:white;
+
+}
+
+button,
+
+.top-btn,
+
+.loading-overlay{
+
+display:none !important;
+
+}
+
+.box,
+
+.card{
+
+box-shadow:none;
+
+border:1px solid #ddd;
+
+}
+
+}
+
+/* ==========================
+   End of File
+========================== */

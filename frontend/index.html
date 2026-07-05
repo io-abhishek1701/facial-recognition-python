@@ -1,60 +1,628 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
     <title>QuickFace AI</title>
 
     <link rel="stylesheet" href="style.css">
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
 </head>
 
 <body>
 
-    <div class="container">
+<div class="container">
 
-        <h1>QuickFace AI</h1>
+<!-- =======================================
+HEADER
+======================================= -->
 
-        <div class="card">
+<header>
 
-            <h2>Enroll Person</h2>
+    <div>
 
-            <input
-                type="text"
-                id="name"
-                placeholder="Enter Name"
-            >
+        <h1>
 
-            <input
-                type="file"
-                id="enrollImage"
-            >
+            <i class="fa-solid fa-user-secret"></i>
 
-            <button onclick="enrollPerson()">
-                Enroll
-            </button>
+            QuickFace AI
 
-        </div>
+        </h1>
 
-        <div class="card">
+        <p>
 
-            <h2>Recognize Person</h2>
+            AI Powered Facial Recognition System
 
-            <input
-                type="file"
-                id="recognizeImage"
-            >
-
-            <button onclick="recognizePerson()">
-                Recognize
-            </button>
-
-        </div>
-
-        <div id="result"></div>
+        </p>
 
     </div>
 
+</header>
+
+
+
+<!-- =======================================
+DASHBOARD
+======================================= -->
+
+<section class="dashboard">
+
+<div class="card">
+
+<i class="fa-solid fa-users fa-2x"></i>
+
+<h3>
+
+Total Persons
+
+</h3>
+
+<h2 id="totalPersons">
+
+0
+
+</h2>
+
+</div>
+
+<div class="card">
+
+<i class="fa-solid fa-database fa-2x"></i>
+
+<h3>
+
+Database
+
+</h3>
+
+<h2>
+
+Connected
+
+</h2>
+
+</div>
+
+<div class="card">
+
+<i class="fa-solid fa-brain fa-2x"></i>
+
+<h3>
+
+Recognition Model
+
+</h3>
+
+<h2>
+
+FaceNet
+
+</h2>
+
+</div>
+
+<div class="card">
+
+<i class="fa-solid fa-shield fa-2x"></i>
+
+<h3>
+
+Detector
+
+</h3>
+
+<h2>
+
+MTCNN
+
+</h2>
+
+</div>
+
+</section>
+
+
+
+<!-- =======================================
+ENROLL PERSON
+======================================= -->
+
+<section class="box">
+
+<h2>
+
+<i class="fa-solid fa-user-plus"></i>
+
+Enroll New Person
+
+</h2>
+
+<label>
+
+Person Name
+
+</label>
+
+<input
+
+type="text"
+
+id="name"
+
+placeholder="Enter Person Name">
+
+<label>
+
+Upload Face Image
+
+</label>
+
+<input
+
+type="file"
+
+id="enrollImage"
+
+accept="image/*">
+
+<img
+
+id="enrollPreview"
+
+class="preview"
+
+src=""
+
+alt="Preview">
+
+<button
+
+onclick="enrollPerson()">
+
+Enroll Person
+
+</button>
+
+<div
+
+id="enrollMessage"
+
+class="message">
+
+</div>
+
+</section>
+
+
+
+<!-- =======================================
+FACE RECOGNITION
+======================================= -->
+
+<section class="box">
+
+<h2>
+
+<i class="fa-solid fa-camera"></i>
+
+Recognize Face
+
+</h2>
+
+<label>
+
+Upload Image
+
+</label>
+
+<input
+
+type="file"
+
+id="recognizeImage"
+
+accept="image/*">
+
+<img
+
+id="recognizePreview"
+
+class="preview"
+
+src=""
+
+alt="Preview">
+
+<button
+
+onclick="recognizePerson()">
+
+Recognize Person
+
+</button>
+
+<div
+
+id="recognitionResult"
+
+class="message">
+
+</div>
+
+</section>
+
+<!-- =======================================
+ENROLLED PERSONS
+======================================= -->
+
+<section class="box">
+
+    <div class="section-header">
+
+        <h2>
+
+            <i class="fa-solid fa-users"></i>
+
+            Enrolled Persons
+
+        </h2>
+
+        <button onclick="loadPersons()">
+
+            <i class="fa-solid fa-rotate-right"></i>
+
+            Refresh List
+
+        </button>
+
+    </div>
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>ID</th>
+
+                <th>Name</th>
+
+                <th>Date Enrolled</th>
+
+                <th>Action</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody id="personsTable">
+
+        </tbody>
+
+    </table>
+
+</section>
+
+
+
+<!-- =======================================
+DELETE PERSON
+======================================= -->
+
+<section class="box">
+
+    <h2>
+
+        <i class="fa-solid fa-trash"></i>
+
+        Delete Person
+
+    </h2>
+
+    <p>
+
+        Enter the ID of the enrolled person you want to remove.
+
+    </p>
+
+    <input
+
+        type="number"
+
+        id="deleteId"
+
+        placeholder="Enter Person ID">
+
+    <button
+
+        class="delete-btn"
+
+        onclick="deletePerson()">
+
+        Delete Person
+
+    </button>
+
+    <div
+
+        id="deleteMessage"
+
+        class="message">
+
+    </div>
+
+</section>
+
+
+
+<!-- =======================================
+SYSTEM STATUS
+======================================= -->
+
+<section class="box">
+
+    <h2>
+
+        <i class="fa-solid fa-server"></i>
+
+        System Status
+
+    </h2>
+
+    <div class="status-grid">
+
+        <div class="status-card">
+
+    <h3>Backend</h3>
+
+    <p id="backendStatus">
+        Checking...
+    </p>
+
+</div>
+
+<div class="status-card">
+
+    <h3>Database</h3>
+
+    <p id="databaseStatus">
+        Checking...
+    </p>
+
+</div>
+
+<div class="status-card">
+
+    <h3>Recognition Model</h3>
+
+    <p id="modelStatus">
+        Checking...
+    </p>
+
+</div>
+
+<div class="status-card">
+
+    <h3>Detector</h3>
+
+    <p id="detectorStatus">
+        Checking...
+    </p>
+
+</div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =======================================
+PROJECT INFORMATION
+======================================= -->
+
+<section class="box">
+
+    <h2>
+
+        <i class="fa-solid fa-circle-info"></i>
+
+        Project Overview
+
+    </h2>
+
+    <ul>
+
+        <li>
+
+            Face Detection using <strong>MTCNN</strong>
+
+        </li>
+
+        <li>
+
+            Face Embeddings generated using <strong>FaceNet</strong>
+
+        </li>
+
+        <li>
+
+            Face Matching using <strong>Cosine Similarity</strong>
+
+        </li>
+
+        <li>
+
+            Backend developed with <strong>FastAPI</strong>
+
+        </li>
+
+        <li>
+
+            SQLite used for storing enrolled users
+
+        </li>
+
+        <li>
+
+            Supports face enrollment and recognition
+
+        </li>
+
+    </ul>
+
+</section>
+
+<!-- =======================================
+FOOTER
+======================================= -->
+
+<footer>
+
+    <hr>
+
+    <div class="footer-content">
+
+        <h2>
+
+            QuickFace AI
+
+        </h2>
+
+        <p>
+
+            AI Powered Facial Recognition System
+
+        </p>
+
+        <br>
+
+        <div class="tech-stack">
+
+            <span>FastAPI</span>
+
+            <span>FaceNet</span>
+
+            <span>MTCNN</span>
+
+            <span>SQLite</span>
+
+            <span>OpenCV</span>
+
+            <span>Python</span>
+
+        </div>
+
+        <br>
+
+        <p>
+
+            Developed for learning Facial Recognition,
+            Face Embeddings and AI-powered Identity Matching.
+
+        </p>
+
+        <br>
+
+        <small>
+
+            © 2026 QuickFace AI • All Rights Reserved
+
+        </small>
+
+    </div>
+
+</footer>
+
+
+
+
+
+<!-- =======================================
+LOADING OVERLAY
+======================================= -->
+
+<div id="loadingOverlay" class="loading-overlay">
+
+    <div class="loader"></div>
+
+    <h3>
+
+        Processing...
+
+    </h3>
+
+    <p>
+
+        Please wait while the AI model processes your request.
+
+    </p>
+
+</div>
+
+
+
+
+
+<!-- =======================================
+BACK TO TOP
+======================================= -->
+
+<button
+    id="topBtn"
+    class="top-btn"
+    onclick="window.scrollTo({
+        top:0,
+        behavior:'smooth'
+    })">
+
+    ↑
+
+</button>
+
+
+
+
+
+<!-- =======================================
+SCRIPT
+======================================= -->
+
 <script src="script.js"></script>
 
+<script>
+
+window.addEventListener("scroll",()=>{
+
+const btn=document.getElementById("topBtn");
+
+if(window.scrollY>300){
+
+btn.style.display="block";
+
+}
+
+else{
+
+btn.style.display="none";
+
+}
+
+});
+
+</script>
+
+</div>
+
 </body>
+
 </html>

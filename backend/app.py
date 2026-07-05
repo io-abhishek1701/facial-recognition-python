@@ -1,17 +1,22 @@
-from fastapi import FastAPI, UploadFile, File, Form, Depends
+from pathlib import Path
+from uuid import uuid4
+import json
+
+import cv2
+import numpy as np
+from fastapi import Depends, FastAPI, File, Form, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 from database import Base, engine, get_db
-from models import Person
-from schemas import PersonResponse
 from face_service import detect_face, generate_embedding
-
+from models import Person
 from recognition import compare_embeddings, is_match
-import numpy as np
 
-import cv2
-import json
-import os
+
+BASE_DIR = Path(__file__).resolve().parent
+ENROLLED_FACES_DIR = BASE_DIR / "enrolled_faces"
+ENROLLED_FACES_DIR.mkdir(exist_ok=True)
 
 # Create all database tables
 Base.metadata.create_all(bind=engine)
@@ -20,93 +25,68 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI(
     title="QuickFace AI",
     description="Face Recognition System using FaceNet",
-    version="1.0.0"
+    version="1.0.0",
 )
 
-# Create folder for storing enrolled face images
-os.makedirs("enrolled_faces", exist_ok=True)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+async def save_uploaded_image(image: UploadFile, prefix: str = "") -> Path:
+    suffix = Path(image.filename or "").suffix or ".jpg"
+    image_path = ENROLLED_FACES_DIR / f"{prefix}{uuid4().hex}{suffix}"
+    image_path.write_bytes(await image.read())
+    return image_path
+
+
+def stored_image_path(image_path: Path) -> str:
+    return str(image_path.relative_to(BASE_DIR))
+
+
+def remove_file_if_exists(image_path: Path) -> None:
+    try:
+        image_path.unlink(missing_ok=True)
+    except OSError:
+        pass
+
 
 @app.post("/enroll")
 async def enroll_person(
     name: str = Form(...),
     image: UploadFile = File(...),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
-    # Save uploaded image
-    image_path = os.path.join("enrolled_faces", image.filename)
-
-    with open(image_path, "wb") as f:
-        f.write(await image.read())
-
-    # Read image using OpenCV
-    img = cv2.imread(image_path)
+    image_path = await save_uploaded_image(image)
+    img = cv2.imread(str(image_path))
 
     if img is None:
-        return {"error": "Invalid image"}
-
-    # Detect face
-    face = detect_face(img)
-
-    if face is None:
-        return {"error": "No face detected"}
-
-    # Generate embedding
-    embedding = generate_embedding(face)
-
-    # Convert embedding to JSON string
-    embedding_json = json.dumps(embedding.tolist())
-
-    # Save to database
-    person = Person(
-        name=name,
-        embedding=embedding_json,
-        image_path=image_path
-    )
-
-    db.add(person)
-    db.commit()
-    db.refresh(person)
-
-    return {
-        "message": "Person enrolled successfully",
-        "id": person.id,
-        "name": person.name
-    }
-
-@app.get("/persons", response_model=list[PersonResponse])
-def get_all_persons(db: Session = Depends(get_db)):
-    return db.query(Person).all()
-
-@app.post("/enroll")
-async def enroll_person(
-    name: str = Form(...),
-    image: UploadFile = File(...),
-    db: Session = Depends(get_db)
-):
-
-    image_path = os.path.join("enrolled_faces", image.filename)
-
-    with open(image_path, "wb") as buffer:
-        buffer.write(await image.read())
-
-    img = cv2.imread(image_path)
-
-    if img is None:
-        return {"success": False, "message": "Invalid image"}
+        remove_file_if_exists(image_path)
+        return {
+            "success": False,
+            "message": "Invalid image",
+        }
 
     face = detect_face(img)
 
     if face is None:
-        return {"success": False, "message": "No face detected"}
+        remove_file_if_exists(image_path)
+        return {
+            "success": False,
+            "message": "No face detected",
+        }
 
     embedding = generate_embedding(face)
-
     embedding_json = json.dumps(embedding.tolist())
 
     person = Person(
         name=name,
         embedding=embedding_json,
-        image_path=image_path
+        image_path=stored_image_path(image_path),
     )
 
     db.add(person)
@@ -115,69 +95,133 @@ async def enroll_person(
 
     return {
         "success": True,
+        "message": "Person enrolled successfully",
         "id": person.id,
-        "name": person.name
+        "name": person.name,
     }
+
 
 @app.post("/recognize")
 async def recognize_person(
     image: UploadFile = File(...),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
+    image_path = await save_uploaded_image(image, prefix="temp_")
 
-    image_path = os.path.join("enrolled_faces", "temp_" + image.filename)
+    try:
+        img = cv2.imread(str(image_path))
 
-    with open(image_path, "wb") as buffer:
-        buffer.write(await image.read())
+        if img is None:
+            return {
+                "success": False,
+                "message": "Invalid image",
+                "name": "Unknown",
+                "confidence": 0,
+            }
 
-    img = cv2.imread(image_path)
+        face = detect_face(img)
 
-    if img is None:
+        if face is None:
+            return {
+                "success": False,
+                "message": "No face detected",
+                "name": "Unknown",
+                "confidence": 0,
+            }
+
+        persons = db.query(Person).all()
+
+        if not persons:
+            return {
+                "success": False,
+                "message": "No enrolled persons found",
+                "name": "Unknown",
+                "confidence": 0,
+            }
+
+        new_embedding = generate_embedding(face)
+        best_match = None
+        highest_score = 0
+
+        for person in persons:
+            stored_embedding = np.array(json.loads(person.embedding))
+            score = compare_embeddings(new_embedding, stored_embedding)
+
+            if score > highest_score:
+                highest_score = score
+                best_match = person
+
+        confidence = round(highest_score * 100, 2)
+
+        if best_match and is_match(highest_score):
+            return {
+                "success": True,
+                "message": "Match found",
+                "name": best_match.name,
+                "confidence": confidence,
+            }
+
         return {
             "success": False,
-            "message": "Invalid image"
+            "message": "No matching person found",
+            "name": "Unknown",
+            "confidence": confidence,
         }
+    finally:
+        remove_file_if_exists(image_path)
 
-    face = detect_face(img)
 
-    if face is None:
-        return {
-            "success": False,
-            "message": "No face detected"
-        }
-
-    new_embedding = generate_embedding(face)
-
+@app.get("/persons")
+def get_persons(db: Session = Depends(get_db)):
     persons = db.query(Person).all()
 
-    best_match = None
-    highest_score = 0
+    result = []
 
     for person in persons:
-
-        stored_embedding = np.array(json.loads(person.embedding))
-
-        score = compare_embeddings(
-            new_embedding,
-            stored_embedding
+        result.append(
+            {
+                "id": person.id,
+                "name": person.name,
+                "image_path": person.image_path,
+                "created_at": person.created_at,
+            }
         )
 
-        if score > highest_score:
-            highest_score = score
-            best_match = person
+    return result
 
-    os.remove(image_path)
 
-    if best_match and is_match(highest_score):
+@app.delete("/person/{person_id}")
+def delete_person(
+    person_id: int,
+    db: Session = Depends(get_db),
+):
+    person = db.query(Person).filter(Person.id == person_id).first()
 
+    if person is None:
         return {
-            "success": True,
-            "name": best_match.name,
-            "confidence": round(highest_score * 100, 2)
+            "success": False,
+            "message": "Person not found",
         }
 
+    saved_path = Path(person.image_path)
+    if not saved_path.is_absolute():
+        saved_path = BASE_DIR / saved_path
+
+    db.delete(person)
+    db.commit()
+    remove_file_if_exists(saved_path)
+
     return {
-        "success": False,
-        "name": "Unknown",
-        "confidence": round(highest_score * 100, 2)
+        "success": True,
+        "message": "Person deleted successfully",
+    }
+
+
+@app.get("/health")
+def health():
+    return {
+        "status": "online",
+        "database": "connected",
+        "model": "FaceNet",
+        "detector": "MTCNN",
     }
