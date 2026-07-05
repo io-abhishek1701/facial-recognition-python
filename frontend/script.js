@@ -1084,3 +1084,301 @@ Detector : MTCNN
 ===========================================
 `
 );
+
+/* ==========================================================
+   Live Webcam Recognition
+========================================================== */
+
+let videoStream = null;
+
+let recognitionInterval = null;
+
+const video = document.getElementById("video");
+
+
+const cameraResult = document.getElementById("cameraResult");
+
+const canvas =
+    document.getElementById("canvas");
+
+const ctx =
+    canvas.getContext("2d");
+
+const overlay =
+    document.getElementById("overlay");
+
+const overlayCtx =
+    overlay.getContext("2d");
+
+
+/* ==========================================================
+   Start Camera
+========================================================== */
+
+async function startCamera() {
+
+    try {
+
+        videoStream = await navigator.mediaDevices.getUserMedia({
+
+            video: {
+                width: 640,
+                height: 480,
+                facingMode: "user"
+            },
+
+            audio: false
+
+        });
+
+        video.srcObject = videoStream;
+
+        video.onloadedmetadata = () => {
+
+            overlay.width =
+
+                video.videoWidth;
+
+            overlay.height =
+
+                video.videoHeight;
+
+            canvas.width =
+
+                video.videoWidth;
+
+            canvas.height =
+
+                video.videoHeight;
+
+        };
+
+        cameraResult.innerHTML = "🟢 Camera Started";
+
+        recognitionInterval = setInterval(
+
+            recognizeLive,
+
+            1000
+
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        cameraResult.innerHTML = "❌ Unable to access camera.";
+
+    }
+
+}
+
+
+/* ==========================================================
+   Stop Camera
+========================================================== */
+
+function stopCamera() {
+
+    if (videoStream) {
+
+        videoStream.getTracks().forEach(track => {
+
+            track.stop();
+
+        });
+
+    }
+
+    clearInterval(recognitionInterval);
+
+    cameraResult.innerHTML = "Camera Stopped.";
+
+}
+
+
+/* ==========================================================
+   Capture Frame
+========================================================== */
+
+function captureFrame() {
+
+    ctx.drawImage(
+
+        video,
+
+        0,
+
+        0,
+
+        canvas.width,
+
+        canvas.height
+
+    );
+
+}
+
+/* ==========================================================
+   Live Recognition
+========================================================== */
+
+async function recognizeLive() {
+
+    if (!videoStream)
+        return;
+
+    captureFrame();
+
+    canvas.toBlob(async function (blob) {
+
+        const formData = new FormData();
+
+        formData.append(
+            "image",
+            blob,
+            "frame.jpg"
+        );
+
+        try {
+
+            const response = await fetch(
+                API + "/recognize",
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+            const data = await response.json();
+
+            overlayCtx.clearRect(
+
+                0,
+
+                0,
+
+                overlay.width,
+
+                overlay.height
+
+            );
+
+            if (data.box) {
+
+                const [x, y, w, h] = data.box;
+
+                overlayCtx.lineWidth = 4;
+
+                overlayCtx.strokeStyle =
+
+                    data.success
+
+                        ? "#00ff00"
+
+                        : "#ff0000";
+
+                overlayCtx.strokeRect(
+
+                    x,
+
+                    y,
+
+                    w,
+
+                    h
+
+                );
+
+                overlayCtx.fillStyle =
+
+                    data.success
+
+                        ? "#00ff00"
+
+                        : "#ff0000";
+
+                overlayCtx.font =
+
+                    "20px Arial";
+
+                overlayCtx.fillText(
+
+                    data.success
+
+                        ?
+
+                        `${data.name} (${data.confidence}%)`
+
+                        :
+
+                        `Unknown (${data.confidence}%)`,
+
+                    x,
+
+                    y - 10
+
+                );
+
+            }
+
+            if (data.success) {
+
+                cameraResult.className =
+                    "message success";
+
+                cameraResult.innerHTML = `
+
+                <h3>✅ ${data.name}</h3>
+
+                <p>
+
+                    Confidence :
+                    <strong>${data.confidence}%</strong>
+
+                </p>
+
+                `;
+
+            }
+
+            else {
+
+                cameraResult.className =
+                    "message error";
+
+                cameraResult.innerHTML = `
+
+                <h3>❌ Unknown Person</h3>
+
+                <p>
+
+                    Confidence :
+                    <strong>${data.confidence}%</strong>
+
+                </p>
+
+                `;
+
+            }
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+            cameraResult.className =
+                "message error";
+
+            cameraResult.innerHTML =
+
+                "Backend Offline";
+
+        }
+
+    }, "image/jpeg", 0.8);
+
+}

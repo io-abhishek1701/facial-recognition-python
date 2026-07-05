@@ -164,9 +164,13 @@ async def recognize_person(
                 "message": "Invalid image",
                 "name": "Unknown",
                 "confidence": 0,
+                "box": None,
             }
 
-        face = detect_face(img)
+        face, box = detect_face(
+            img,
+            return_box=True
+        )
 
         if face is None:
             return {
@@ -174,6 +178,7 @@ async def recognize_person(
                 "message": "No face detected",
                 "name": "Unknown",
                 "confidence": 0,
+                "box": None,
             }
 
         persons = db.query(Person).all()
@@ -184,15 +189,24 @@ async def recognize_person(
                 "message": "No enrolled persons found",
                 "name": "Unknown",
                 "confidence": 0,
+                "box": box,
             }
 
         new_embedding = generate_embedding(face)
+
         best_match = None
         highest_score = 0
 
         for person in persons:
-            stored_embedding = np.array(json.loads(person.embedding))
-            score = compare_embeddings(new_embedding, stored_embedding)
+
+            stored_embedding = np.array(
+                json.loads(person.embedding)
+            )
+
+            score = compare_embeddings(
+                new_embedding,
+                stored_embedding
+            )
 
             if score > highest_score:
                 highest_score = score
@@ -201,11 +215,13 @@ async def recognize_person(
         confidence = round(highest_score * 100, 2)
 
         if best_match and is_match(highest_score):
+
             return {
                 "success": True,
                 "message": "Match found",
                 "name": best_match.name,
                 "confidence": confidence,
+                "box": box,
             }
 
         return {
@@ -213,7 +229,9 @@ async def recognize_person(
             "message": "No matching person found",
             "name": "Unknown",
             "confidence": confidence,
+            "box": box,
         }
+
     finally:
         remove_file_if_exists(image_path)
 

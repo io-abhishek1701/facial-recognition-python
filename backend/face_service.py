@@ -16,20 +16,19 @@ detector = MTCNN()
 embedder = FaceNet()
 
 
-def detect_face(image):
-    """
-    Detects the largest face in an image and returns the cropped face.
-    """
+def detect_face(image, return_box=False):
 
     rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
     faces = detector.detect_faces(rgb)
 
     if len(faces) == 0:
-        return None
+        return (None, None) if return_box else None
 
-    # Take the largest detected face
-    face = max(faces, key=lambda x: x["box"][2] * x["box"][3])
+    face = max(
+        faces,
+        key=lambda x: x["box"][2] * x["box"][3]
+    )
 
     x, y, w, h = face["box"]
 
@@ -38,7 +37,11 @@ def detect_face(image):
 
     cropped = rgb[y:y+h, x:x+w]
 
-    cropped = cv2.resize(cropped, (160, 160))
+    cropped = cv2.resize(cropped, (160,160))
+
+    if return_box:
+
+        return cropped, [x,y,w,h]
 
     return cropped
 
